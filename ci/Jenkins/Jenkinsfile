@@ -17,7 +17,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    credentialsId: 'github',
                     url: "${GIT_REPO_URL}"
             }
         }
@@ -60,17 +59,17 @@ pipeline {
 
         stage('Update Deployment File') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'github', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_TOKEN')]) {
+                withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                     sh '''
                         git config user.email "soulaimane@example.com"
-                        git config user.name "$GITHUB_USERNAME"
+                        git config user.name "Soulaimane99"
 
                         sed -i "s/tag: .*/tag: \\"${build_version}\\"/" helm/app/values.yaml
 
                         git add helm/app/values.yaml
                         git commit -m "Update deployment image to version ${build_version}" || echo "No changes to commit"
 
-                        git push https://${GITHUB_USERNAME}:${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+                        git push https://Soulaimane99:${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
                     '''
                 }
             }
